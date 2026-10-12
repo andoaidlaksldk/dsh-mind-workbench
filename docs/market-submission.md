@@ -17,8 +17,8 @@
 | 包体积 | ✅ 约 2.7 MiB（上限 8 MiB），`npm run pack:check` 会核对 |
 | 包内无 `.env`/密钥/杂散文件/本机绝对路径 | ✅ 由 `scripts/check-package.mjs` 检查 |
 | 许可证 | ✅ MIT（`LICENSE`），不出现任何上游品牌与链接 |
-| 本机安装并实际打开 | ⚠️ 已安装过一次，但那次是**重复路由 bug 的旧版本**；需重装当前版本（见第 2 节） |
-| **`repository` 指向你自己的公开 GitHub 仓库** | ❌ **阻塞项**。当前是占位 `https://github.com/dataelement/dsh-mind-workbench`，必须改成你自己的 `owner/repo`（`package.json` 的 `repository.url` 与 `lib/client.js` 的 `REPOSITORY` 两处都要改，且两者一致） |
+| 本机安装并实际打开 | ✅ 已安装到本机 DSH Desktop 并实际使用（当前版本见 `package.json`；安装方式见第 2 节） |
+| **`repository` 指向你自己的公开 GitHub 仓库** | ✅ 已指向 `https://github.com/andoaidlaksldk/dsh-mind-workbench`（`package.json` 的 `repository.url` 与 `lib/client.js` 的 `REPOSITORY` 两处一致，`scripts/check-package.mjs` 会在它退回占位值时报警） |
 | 仓库根目录即包根（v1 不支持 monorepo 子目录） | ✅ 本目录就是包根，把它作为仓库根推送即可 |
 | 上架资料：`name` / `category` / `description.zh|en` / `screenshots` | ⚠️ 见第 3 节，截图必须在**最终可安装版本**上实拍 |
 | 收录 PR | 未提交（本次任务不含投稿动作） |

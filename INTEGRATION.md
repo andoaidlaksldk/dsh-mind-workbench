@@ -11,7 +11,7 @@
 |---|---|
 | 新项目 | 本目录（仓库根即包根），npm 包名 `dsh-mind-workbench`，显示名 `DSHMindWorkbench` |
 | 形态 | 一个符合《工作台开发规范》的 DSH 插件包（npm 包 + Cordis bundle + Desktop 工作台） |
-| 工作台身份 | `dataelement/dsh-mind-workbench`（由 `register({ repository })` 解析；上架前需改成真实仓库） |
+| 工作台身份 | `andoaidlaksldk/dsh-mind-workbench`（由 `register({ repository })` 解析） |
 | 数据目录 | `dshHomePath('mind-workbench')` → `%USERPROFILE%\.dsh\mind-workbench`（或当前 DSH_HOME） |
 | 服务端路径前缀 | `/api/dsh-mind-workbench/` |
 | 对 dsh-desktop 的改动 | 3 处新增，0 处修改既有逻辑（见第 6 节） |
@@ -116,7 +116,7 @@
 ```js
 ctx.desktopWorkbenches.register({
   title: 'DSH 思维导图', titleEn: 'DSH Mind Workbench',
-  repository: 'https://github.com/dataelement/dsh-mind-workbench',
+  repository: 'https://github.com/andoaidlaksldk/dsh-mind-workbench',
   customFrame: true,            // 占据主内容区，画布最大化
   category: '效率工具', ...
 }, Panel)

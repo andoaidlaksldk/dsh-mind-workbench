@@ -586,7 +586,7 @@ ok('register 描述符含 title / repository / customFrame')
 
 const tree = Component({
   service: { state: null, currentSession: () => null },
-  entry: { id: 'dataelement/dsh-mind-workbench' },
+  entry: { id: 'andoaidlaksldk/dsh-mind-workbench' },
   active: true,
   conversation: null
 })
@@ -648,7 +648,7 @@ ok('工具栏含「模型配置」按钮，且与「AI 协助」并列')
 // 否则宿主每次切换模式都会重建输入树。
 const withConversation = Component({
   service: { state: null, currentSession: () => null },
-  entry: { id: 'dataelement/dsh-mind-workbench' },
+  entry: { id: 'andoaidlaksldk/dsh-mind-workbench' },
   active: true,
   conversation: reactStub.createElement('div', { id: 'host-conversation' }, null)
 })
