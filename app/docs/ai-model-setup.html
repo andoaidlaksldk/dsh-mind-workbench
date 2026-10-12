@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>模型配置教程（画布 AI）</title>
+    <!-- 由 scripts/sync-app.mjs 从 docs/ai-model-setup.md 生成，请勿直接编辑 -->
+    <style>
+      :root{color-scheme:light dark}
+      body{margin:0;padding:32px 24px 64px;background:#f7f8fa;color:#1f2329;
+        font:15px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif}
+      main{max-width:760px;margin:0 auto;background:#fff;border:1px solid #e5e6eb;border-radius:12px;
+        padding:28px 32px 40px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+      h1{font-size:24px;line-height:1.4;margin:0 0 20px}
+      h2{font-size:18px;margin:32px 0 12px;padding-top:16px;border-top:1px solid #f0f0f0}
+      h2:first-of-type{border-top:0;padding-top:0}
+      h3{font-size:16px;margin:24px 0 10px}
+      p{margin:10px 0}
+      a{color:#2454ff;word-break:break-all}
+      code{background:#f2f3f5;border-radius:4px;padding:1px 5px;font-size:13px;
+        font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+      pre{background:#f7f8fa;border:1px solid #e5e6eb;border-radius:8px;padding:12px 14px;overflow:auto}
+      pre code{background:none;padding:0}
+      ul,ol{margin:10px 0;padding-left:22px}
+      li{margin:4px 0}
+      blockquote{margin:14px 0;padding:10px 14px;background:#f7f8fa;border-left:3px solid #2454ff;border-radius:0 8px 8px 0}
+      blockquote p{margin:4px 0}
+      table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+      th,td{border:1px solid #e5e6eb;padding:8px 10px;text-align:left;vertical-align:top}
+      th{background:#f7f8fa;font-weight:600}
+      hr{border:0;border-top:1px solid #f0f0f0;margin:24px 0}
+      @media (prefers-color-scheme:dark){
+        body{background:#17181a;color:#e8e8e8}
+        main{background:#1f2022;border-color:#2f3033;box-shadow:none}
+        h2{border-color:#2f3033}
+        code,pre,blockquote{background:#26272a}
+        pre,table th,table td{border-color:#333438}
+        th{background:#26272a}
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+<h1>模型配置教程（画布 AI）</h1>
+<p>本工作台内嵌的思维导图应用带 AI 能力（AI 一键生成导图、AI 对话）。 上游画布原本把 AI 请求发到「本地桥」（闭源客户端，默认 <code>localhost:3456</code>），Web 版因此<strong>不可用</strong>； 本工作台<strong>自己实现了这个桥</strong>，并把请求改走同源接口，所以：</p>
+<ul><li>不需要安装任何闭源客户端；</li><li>可以选择<strong>多家供应商</strong>（凡提供 OpenAI 兼容接口的都可用）；</li><li>API Key 只保存在本机数据目录，不经过第三方。</li></ul>
+<h2>一、在哪里配置</h2>
+<p>打开工作台面板右上角的 <strong>「模型配置」</strong>，填写四项后点「保存」：</p>
+<table><thead><tr><th>字段</th><th>说明</th><th>示例</th></tr></thead><tbody><tr><td>供应商</td><td>从预设里选；选「自定义」可手填地址</td><td>DeepSeek</td></tr><tr><td>接口地址</td><td>供应商的 OpenAI 兼容 base URL</td><td><code>https://api.deepseek.com/v1</code></td></tr><tr><td>API Key</td><td>供应商控制台创建的密钥</td><td><code>sk-…</code></td></tr><tr><td>模型名</td><td>该供应商的模型标识；火山方舟填<strong>推理接入点 ID</strong></td><td><code>deepseek-chat</code></td></tr></tbody></table>
+<p>点「测试连接」会保存配置并发一次只取 1 个 token 的真实请求，用来确认地址、密钥、模型名都对。</p>
+<blockquote><p>配置存在 <code>&lt;DSH 数据目录&gt;/mind-workbench/state.json</code> 的 <code>aiProvider</code> 字段里，只在本机。</p></blockquote>
+<h2>二、常用供应商参数</h2>
+<table><thead><tr><th>供应商</th><th>接口地址（base URL）</th><th>模型名示例</th><th>备注</th></tr></thead><tbody><tr><td>火山方舟（豆包）</td><td><code>https://ark.cn-beijing.volces.com/api/v3</code></td><td><code>ep-…</code></td><td>必须填<strong>推理接入点 ID</strong>，不是模型名</td></tr><tr><td>DeepSeek</td><td><code>https://api.deepseek.com/v1</code></td><td><code>deepseek-chat</code></td><td></td></tr><tr><td>OpenAI</td><td><code>https://api.openai.com/v1</code></td><td><code>gpt-4o-mini</code></td><td>需要可访问的网络</td></tr><tr><td>月之暗面 Kimi</td><td><code>https://api.moonshot.cn/v1</code></td><td><code>moonshot-v1-8k</code></td><td></td></tr><tr><td>阿里云通义千问</td><td><code>https://dashscope.aliyuncs.com/compatible-mode/v1</code></td><td><code>qwen-plus</code></td><td>走 OpenAI 兼容模式</td></tr><tr><td>智谱 GLM</td><td><code>https://open.bigmodel.cn/api/paas/v4</code></td><td><code>glm-4-flash</code></td><td></td></tr><tr><td>硅基流动</td><td><code>https://api.siliconflow.cn/v1</code></td><td><code>deepseek-ai/DeepSeek-V3</code></td><td></td></tr><tr><td>Ollama（本地）</td><td><code>http://127.0.0.1:11434/v1</code></td><td><code>qwen2.5:7b</code></td><td>本地跑模型，不需要 Key</td></tr><tr><td>自定义</td><td>任何 OpenAI 兼容地址</td><td>任意</td><td>只要实现 <code>POST {base}/chat/completions</code></td></tr></tbody></table>
+<blockquote><p>接口地址填到 <code>…/v1</code> 这一级即可，本工作台会自动补 <code>/chat/completions</code>；</p><p>若你直接粘贴了完整的 <code>…/chat/completions</code>，也会原样使用。</p></blockquote>
+<h2>三、画布里的「教程」链接</h2>
+<p>画布「AI 配置」弹窗里的「教程」链接<strong>已指向本页</strong>（上游原本指向一篇微信公众号文章）。 本页由 <code>docs/ai-model-setup.md</code> 生成到包内的 <code>app/docs/ai-model-setup.html</code>，离线可看。</p>
+<h2>四、常见问题</h2>
+<table><thead><tr><th>现象</th><th>原因与处理</th></tr></thead><tbody><tr><td>提示「尚未配置模型接口」</td><td>还没保存模型配置，或供应商选了「自定义」但接口地址为空。</td></tr><tr><td>提示「模型接口返回 HTTP 401」</td><td>Key 不正确、已删除，或该 Key 没有对应模型的权限。</td></tr><tr><td>提示「模型接口返回 HTTP 404」</td><td>接口地址少了或多了路径（例如忘了 <code>/v1</code>）。</td></tr><tr><td>提示模型不存在</td><td>模型名写错；火山方舟要把 <code>ep-…</code> 接入点 ID 填进「模型名」。</td></tr><tr><td>一直无响应</td><td>网络无法访问该供应商；公司网络或代理可能拦截。</td></tr><tr><td>费用怎么算</td><td>由各供应商按其规则计费，与本工作台无关，本工作台不收费。</td></tr><tr><td>换机器还能用吗</td><td>Key 存在本机数据目录，换机器需重新填写。</td></tr></tbody></table>
+<h2>五、安全说明</h2>
+<ul><li>API Key 只存在本机数据目录，由本工作台转发请求时使用，不会上传到其他地方。</li><li>本工作台<strong>只转发</strong>请求，不记录对话内容。</li><li>转发目标仅允许 <code>http</code>/<code>https</code>，其他协议（如 <code>file:</code>）会被拒绝。</li><li>API Key 等同于账号调用凭证：不要写进截图、文档或提交到代码仓库。</li></ul>
+    </main>
+  </body>
+</html>

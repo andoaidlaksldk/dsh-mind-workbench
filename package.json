@@ -1,0 +1,63 @@
+{
+  "name": "dsh-mind-workbench",
+  "version": "1.0.12",
+  "displayName": "DSHMindWorkbench",
+  "description": "DSH 思维导图工作台：在工作台里创建、编辑和导出思维导图，文档保存在 DSH 数据目录。",
+  "type": "module",
+  "main": "./dsh/index.js",
+  "exports": {
+    ".": "./dsh/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml"
+  },
+  "files": [
+    "dsh/index.js",
+    "lib/client.js",
+    "cordis.patch.yml",
+    "app",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "author": "DSH Mind Workbench",
+  "keywords": [
+    "dsh-plugin",
+    "workbench",
+    "mind-map",
+    "思维导图"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dataelement/dsh-mind-workbench.git"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "dsh-desktop-workbenches",
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  },
+  "scripts": {
+    "app:sync": "node scripts/sync-app.mjs",
+    "verify": "node scripts/verify.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "pack:check": "node scripts/verify.mjs && node scripts/smoke.mjs && node scripts/check-package.mjs",
+    "install:desktop": "node scripts/install-to-desktop.mjs",
+    "canvas:overlay": "node scripts/canvas-overlay.mjs",
+    "canvas:build": "node scripts/canvas-overlay.mjs --build"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.2"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.2",
+    "@deepseek-ai/dsh-client-connection": ">=0.2.0-rc.1 <0.3.0-0",
+    "@deepseek-ai/dsh-client-locale": ">=0.2.0-rc.1 <0.3.0-0"
+  }
+}

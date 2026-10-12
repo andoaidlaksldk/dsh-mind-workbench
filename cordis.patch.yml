@@ -1,0 +1,7 @@
+# DSH 思维导图工作台：把服务端入口插入 Harness 插件树。
+# root 指向 DSH 数据目录下的 mind-workbench，用于保存思维导图文档与偏好设置。
+- insert:
+    - id: dsh-mind-workbench
+      name: dsh-mind-workbench
+      config:
+        root: !!js dshHomePath('mind-workbench')
