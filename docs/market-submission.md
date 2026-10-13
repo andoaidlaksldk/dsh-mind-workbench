@@ -22,7 +22,7 @@
 | **`repository` 指向你自己的公开 GitHub 仓库** | ✅ 已指向 `https://github.com/andoaidlaksldk/dsh-mind-workbench`（`package.json` 的 `repository.url` 与 `lib/client.js` 的 `REPOSITORY` 两处一致，`scripts/check-package.mjs` 会在它退回占位值时报警） |
 | 仓库根目录即包根（v1 不支持 monorepo 子目录） | ✅ 本目录就是包根，把它作为仓库根推送即可 |
 | 上架资料：`name` / `category` / `description.zh|en` / `screenshots` | ⚠️ 见第 3 节，截图必须在**最终可安装版本**上实拍 |
-| 收录 PR | 未提交（本次任务不含投稿动作） |
+| 收录 PR | ✅ 已提交：`dataelement/awesome-dsh-workbench` #45（分支 `add-andoaidlaksldk-dsh-mind-workbench`）；本轮按审核意见修正介绍并发布 **v1.0.14** |
 
 ## 2. 先把「能用」跑通（重装 + 重启）
 
