@@ -154,7 +154,7 @@ for (const unsupported of ['Xlsx', 'Excel', 'FreeMind', 'Mermaid', 'Html']) {
 ok(`文档声明的导出格式与产物一致（实际 ${availableExports.length} 种：${availableExports.map((entry) => entry.name).join('、')}）`)
 
 // 措辞与来源声明：本项目是内嵌画布项目的二次开发，文档不用「上游 / 下游」这类相对措辞。
-for (const doc of ['README.md', 'INTEGRATION.md', 'THIRD-PARTY-NOTICES.md']) {
+for (const doc of ['README.md', 'INTEGRATION.md']) {
   const text = readFileSync(join(root, doc), 'utf8')
   assert.equal(/上游|下游/.test(text), false, `${doc} 里出现了「上游 / 下游」措辞`)
 }

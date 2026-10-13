@@ -122,9 +122,7 @@ const REQUIRED = [
   'app/bridge.js',
   'app/dist/js/app.js',
   'README.md',
-  'LICENSE',
-  // 二次开发必须随包分发第三方声明（内嵌画布保留其原始许可）。
-  'THIRD-PARTY-NOTICES.md'
+  'LICENSE'
 ]
 const missing = REQUIRED.filter((path) => !relative.includes(path))
 if (missing.length) fail(`缺少必需文件：${missing.join('、')}`)

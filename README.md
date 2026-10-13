@@ -67,13 +67,11 @@ pnpm pack
 | `GET /api/dsh-mind-workbench/documents` | 文档列表 |
 | `POST /api/dsh-mind-workbench/documents` | `create` / `open` / `rename` / `duplicate` / `import` / `delete` |
 
-## 来源与声明
+## 二次开发声明
 
-本项目是基于开源思维导图画布项目的**二次开发**：画布本身的业务代码未做改动，
-数据存取、文档管理、工作台面板与 Agent 读写成导图的工具由本工作台提供。
-第三方许可与出处见 [THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md)。
+本项目依据开源思维导图项目 **mind-map** 做的二次开发：画布本身的业务代码未做改动，
+数据存取、文档管理、工作台面板与 Agent 读写成导图的工具由本工作台实现。
 
 ## 许可
 
-本包 MIT（见 [LICENSE](./LICENSE)）；内嵌画布及其依赖的许可与出处见
-[THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md)。
+本包 MIT，见 [LICENSE](./LICENSE)。

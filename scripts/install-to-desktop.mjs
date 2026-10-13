@@ -32,7 +32,7 @@ import { fileURLToPath } from 'node:url'
 
 const PACKAGE_NAME = 'dsh-mind-workbench'
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const PACKAGE_ENTRIES = ['package.json', 'cordis.patch.yml', 'README.md', 'LICENSE', 'THIRD-PARTY-NOTICES.md']
+const PACKAGE_ENTRIES = ['package.json', 'cordis.patch.yml', 'README.md', 'LICENSE']
 const PACKAGE_DIRS = ['dsh', 'lib', 'app']
 
 const args = process.argv.slice(2)
