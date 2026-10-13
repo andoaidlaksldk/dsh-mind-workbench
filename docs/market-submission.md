@@ -13,10 +13,11 @@
 
 | 项 | 状态 |
 |---|---|
-| 包格式（`dsh.bundle.patch`、`dsh.client.*`、`exports["./client"]`、`cordis.patch.yml`） | ✅ 已满足，`npm run verify` 41 项 + `npm run smoke` 10 项通过 |
+| 包格式（`dsh.bundle.patch`、`dsh.client.*`、`exports["./client"]`、`cordis.patch.yml`） | ✅ 已满足，`npm run verify` 66 项 + `npm run smoke` 10 项通过 |
+| **介绍与实际能力一致** | ✅ 导出格式按产物的实际开放项声明（8 种）；`npm run verify` 会**从产物解析**导出类型与过滤规则，再核对 README / INTEGRATION 的声明，声明跑到产物前面会直接失败 |
 | 包体积 | ✅ 约 2.7 MiB（上限 8 MiB），`npm run pack:check` 会核对 |
 | 包内无 `.env`/密钥/杂散文件/本机绝对路径 | ✅ 由 `scripts/check-package.mjs` 检查 |
-| 许可证 | ✅ MIT（`LICENSE`），不出现任何上游品牌与链接 |
+| 许可证 | ✅ MIT（`LICENSE`），不出现任何画布原品牌与链接 |
 | 本机安装并实际打开 | ✅ 已安装到本机 DSH Desktop 并实际使用（当前版本见 `package.json`；安装方式见第 2 节） |
 | **`repository` 指向你自己的公开 GitHub 仓库** | ✅ 已指向 `https://github.com/andoaidlaksldk/dsh-mind-workbench`（`package.json` 的 `repository.url` 与 `lib/client.js` 的 `REPOSITORY` 两处一致，`scripts/check-package.mjs` 会在它退回占位值时报警） |
 | 仓库根目录即包根（v1 不支持 monorepo 子目录） | ✅ 本目录就是包根，把它作为仓库根推送即可 |
@@ -59,7 +60,7 @@ dsh: fatal load failure: …
 ```
 
 - 路径段字符受限：真实校验 `assertFetchRoute` 要求每段匹配 `/^[A-Za-z0-9_$.-]+$/`；
-  上游产物里的 `图片加载失败.svg` 经 `encodeURI` 变成百分号编码 → 判为 invalid。
+  画布构建产物里的 `图片加载失败.svg` 经 `encodeURI` 变成百分号编码 → 判为 invalid。
 - 抛出位置致命：该 `register` 在异步链里，抛出不落在插件 effect 内 →
   **unhandled rejection → `dsh: fatal load failure` → 整个 Harness 退出**。
   这才是"工作台装不上、一直报错"的真正原因（旧版本在启动时把宿主一起带走）。
@@ -118,8 +119,8 @@ screenshots:
 - [ ] 在本机 DSH Desktop **0.11.1 / Windows x64** 上从最终来源安装、重启、实际打开并用过一次
       （新建文档 → 加节点 → 导出图片），截图留档。
 - [ ] `repository` 已改成你自己的公开仓库；仓库有 `LICENSE`；仓库根就是包根。
-- [ ] 仓库里没有密钥、客户数据、本机绝对路径；`app/dist/**` 只含上游 MIT 素材并已在
-      `LICENSE` / `README` 中不出现上游品牌与链接。
+- [ ] 仓库里没有密钥、客户数据、本机绝对路径；`app/dist/**` 只含画布源码 MIT 素材并已在
+      `LICENSE` / `README` 中不出现画布原品牌与链接。
 - [ ] 中英文简介属实（会对照代码核对，不要写夸大用语）。
 - [ ] 截图在最终版本上实拍、可访问、符合尺寸要求。
 - [ ] PR 只新增 `data/workbenches/<owner>__<repo>.yml` 一个文件，描述里写明用途、

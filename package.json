@@ -1,6 +1,6 @@
 {
   "name": "dsh-mind-workbench",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "displayName": "DSHMindWorkbench",
   "description": "DSH 思维导图工作台：在工作台里创建、编辑和导出思维导图，文档保存在 DSH 数据目录。",
   "type": "module",
@@ -17,7 +17,8 @@
     "cordis.patch.yml",
     "app",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "THIRD-PARTY-NOTICES.md"
   ],
   "license": "MIT",
   "author": "DSH Mind Workbench",

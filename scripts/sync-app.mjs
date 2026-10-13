@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 从上游 mind-map 项目的已构建产物生成工作台内嵌应用目录 `app/`。
+ * 从画布源码 mind-map 项目的已构建产物生成工作台内嵌应用目录 `app/`。
  *
  * 输入：<repo>/../mind-map-0.20.0/index.html 与 <repo>/../mind-map-0.20.0/dist
  * 输出：<repo>/app/index.html（改造后的宿主页）与 <repo>/app/dist（原样拷贝）
@@ -8,7 +8,7 @@
  * 改造点只有三处，不触碰任何业务代码：
  *   1. 打开 `window.takeOverApp`，让应用把状态读写交给 `app/bridge.js`；
  *   2. 去掉第三方统计脚本（本地/离线使用不需要联网上报）；
- *   3. 用 `app/bridge.js` 取代上游 index.html 里的示例接管代码。
+ *   3. 用 `app/bridge.js` 取代画布源码 index.html 里的示例接管代码。
  *
  * 用法：node scripts/sync-app.mjs [--source <mind-map 目录>]
  */
@@ -38,8 +38,8 @@ function fail(message) {
   process.exit(1)
 }
 
-if (!existsSync(sourceHtmlPath)) fail(`找不到上游入口页：${sourceHtmlPath}`)
-if (!existsSync(sourceDist)) fail(`找不到上游构建产物：${sourceDist}`)
+if (!existsSync(sourceHtmlPath)) fail(`找不到画布入口页：${sourceHtmlPath}`)
+if (!existsSync(sourceDist)) fail(`找不到画布构建产物：${sourceDist}`)
 
 const sourceHtml = readFileSync(sourceHtmlPath, 'utf8')
 
@@ -47,7 +47,7 @@ const sourceHtml = readFileSync(sourceHtmlPath, 'utf8')
 const stylesheetTags = sourceHtml.match(/<link[^>]+rel="stylesheet"[^>]*>/g) || []
 const scriptTags = sourceHtml.match(/<script[^>]+src="dist\/[^"]+"[^>]*>\s*<\/script>/g) || []
 
-if (!scriptTags.length) fail('上游入口页里没有找到 dist/ 下的脚本标签，无法生成宿主页。')
+if (!scriptTags.length) fail('画布入口页里没有找到 dist/ 下的脚本标签，无法生成宿主页。')
 
 const html = `<!DOCTYPE html>
 <html lang="zh">
@@ -89,7 +89,7 @@ writeFileSync(targetHtmlPath, html, 'utf8')
 
 // --- 文件名 ASCII 化 ---------------------------------------------------------
 // Harness 的精确 fetch 路由要求路径每一段匹配 `/^[A-Za-z0-9_$.-]+$/`；
-// 上游产物里有非 ASCII 文件名（如 `图片加载失败.svg`），直接登记会被判为
+// 画布构建产物里有非 ASCII 文件名（如 `图片加载失败.svg`），直接登记会被判为
 // `invalid exact Fetch route`。这里把违规文件名改成等价 ASCII 名，
 // 并在全部文本产物里同步改写引用，保证应用自身仍然能找到它。
 const SEGMENT_OK = /^[A-Za-z0-9_$.-]+$/
@@ -154,7 +154,7 @@ for (const { from, to, relative } of renames) {
 if (!renames.length) console.log('[sync-app] 所有产物文件名均符合路由段要求，无需改名')
 
 // --- 模型配置教程：生成页面 + 改写弹窗里的「教程」链接 -------------------------
-// 上游 AiConfigDialog.vue 把「教程」写死指向一篇微信公众号文章。这里改成指向本包
+// 画布源码 AiConfigDialog.vue 把「教程」写死指向一篇微信公众号文章。这里改成指向本包
 // 自己托管的教程页（docs/ai-model-setup.md 渲染而来），离线可用、不依赖外部站点。
 // 想改用别的地址（例如发布到 GitHub 后的 raw 链接）时传 --tutorial-url 即可。
 const UPSTREAM_TUTORIAL_URL = 'https://mp.weixin.qq.com/s/JNb7PH4sCjWzIZ9G8wStGQ'
@@ -358,13 +358,13 @@ function rewriteTutorialLinks(url) {
 buildTutorialPage(tutorialUrl)
 const tutorialTouched = rewriteTutorialLinks(tutorialUrl)
 if (tutorialTouched === 0) {
-  console.warn('[sync-app] 警告：没有找到上游的教程链接，AI 配置弹窗里可能仍是旧地址')
+  console.warn('[sync-app] 警告：没有找到画布的教程链接，AI 配置弹窗里可能仍是旧地址')
 } else {
   console.log(`[sync-app] 已把 ${tutorialTouched} 个产物里的「教程」链接改为 ${tutorialUrl}`)
 }
 
 // --- AI 请求改走本插件的本地桥 -----------------------------------------------
-// 上游画布把 AI 请求 POST 给「本地桥」（闭源客户端，默认 http://localhost:3456/ai/chat），
+// 画布源码画布把 AI 请求 POST 给「本地桥」（闭源客户端，默认 http://localhost:3456/ai/chat），
 // 由它转发到火山方舟。这里把这个地址换成同源路径，由本插件服务端实现桥：
 // 于是无需任何闭源客户端，并且可以按用户选择的供应商转发（多供应商支持）。
 const UPSTREAM_AI_BRIDGE = '`http://localhost:${this.options.port}/ai/chat`'
@@ -400,7 +400,7 @@ if (aiTouched === 0) {
 }
 
 // --- 画布自带「AI 配置」弹窗的文案 --------------------------------------------
-// 上游弹窗写死「目前仅支持火山方舟大模型…」，但本工作台已经把 AI 请求改走自己的桥，
+// 画布源码弹窗写死「目前仅支持火山方舟大模型…」，但本工作台已经把 AI 请求改走自己的桥，
 // 支持多家供应商（面板右上角「模型配置」）。文案不改，用户就会以为这功能还是老样子
 // （而且这句话本身已经不成立了），所以这里如实改写。
 const DIALOG_COPY = [
@@ -456,9 +456,9 @@ if (dialogCopy.touched === 0) {
   console.log(`[sync-app] 已改写 ${dialogCopy.touched} 个产物里的 AI 配置弹窗文案（改为多供应商说明）`)
 }
 
-// --- 品牌清理：产物里不得出现上游项目的名称与链接 -----------------------------
+// --- 品牌清理：产物里不得出现内嵌画布项目的名称与链接 -----------------------------
 // 内嵌画布是第三方构建产物，它的 i18n、示例数据、"更多/关于"菜单与内嵌依赖元数据里
-// 带着上游项目名、站点与 GitHub 链接。本包对外只呈现自己的工作台身份，所以在这里清掉。
+// 带着内嵌画布项目名、站点与 GitHub 链接。本包对外只呈现自己的工作台身份，所以在这里清掉。
 // 链接类一并改指宿主产品站点，因此"更多/关于"菜单仍然可用。
 //
 // ⚠ 硬约束（踩过一次，代价是整块画布白屏）：**只允许替换字符串字面量**。
@@ -529,7 +529,7 @@ function scrubBrand() {
   return touched
 }
 
-console.log(`[sync-app] 已清理 ${scrubBrand()} 个产物文件里的上游品牌与链接`)
+console.log(`[sync-app] 已清理 ${scrubBrand()} 个产物文件里的画布原品牌与链接`)
 
 // --- 语法闸门 -----------------------------------------------------------------
 // 文本级改写一旦误伤标识符，产物会变成语法错误，外在表现是整块画布白屏

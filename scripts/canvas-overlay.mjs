@@ -1,13 +1,13 @@
 /**
- * 把「画布定制」（overlay）应用到上游思维导图源码，并可选重新构建。
+ * 把「画布定制」（overlay）应用到画布源码思维导图源码，并可选重新构建。
  *
  * 为什么要这一步：画布自带的「AI 配置」弹窗是 Vue 组件，要把它改成
  * 「供应商下拉框 + API Key + 模型 URL」，只能改源码重新构建，字符串替换做不到。
- * 改动的**权威副本**放在本包的 overlay/ 目录，上游仓库只是构建输入。
+ * 改动的**权威副本**放在本包的 overlay/ 目录，画布源码仓库只是构建输入。
  *
  * 用法：
  *   node scripts/canvas-overlay.mjs             # 只应用源码改动
- *   node scripts/canvas-overlay.mjs --build     # 应用后执行上游构建（vue-cli-service build）
+ *   node scripts/canvas-overlay.mjs --build     # 应用后执行画布源码构建（vue-cli-service build）
  *   node scripts/canvas-overlay.mjs --source "D:\path\to\mind-map-0.20.0"
  */
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs'
@@ -26,7 +26,7 @@ const dialogPath = join(webRoot, 'src', 'pages', 'Edit', 'components', 'AiConfig
 const langRoot = join(webRoot, 'src', 'lang')
 
 if (!existsSync(dialogPath)) {
-  console.error(`[overlay] 找不到上游源码：${dialogPath}（可用 --source 指定仓库根目录）`)
+  console.error(`[overlay] 找不到画布源码：${dialogPath}（可用 --source 指定仓库根目录）`)
   process.exit(1)
 }
 
@@ -119,7 +119,7 @@ for (const [file, spec] of Object.entries(LANGS)) {
 }
 
 // ---- 3. 本地桥地址：源码层直接改成同源路径 -----------------------------------
-// 上游画布把 AI 请求发给闭源客户端的本地服务（localhost:3456）。本工作台自己实现了
+// 画布源码画布把 AI 请求发给闭源客户端的本地服务（localhost:3456）。本工作台自己实现了
 // 这个桥，所以源码里就改成同源路径，避免再依赖构建产物层的字符串替换。
 const BRIDGE_REWRITES = [
   {
@@ -142,7 +142,7 @@ for (const rewrite of BRIDGE_REWRITES) {
   const text = readFileSync(rewrite.file, 'utf8')
   if (!text.includes(rewrite.from)) {
     if (text.includes(rewrite.to)) console.log(`[overlay] ${rewrite.file.replace(webRoot, '…')} 已是同源地址，跳过`)
-    else console.warn(`[overlay] ${rewrite.file.replace(webRoot, '…')} 找不到待替换的本地桥地址，请检查上游是否改版`)
+    else console.warn(`[overlay] ${rewrite.file.replace(webRoot, '…')} 找不到待替换的本地桥地址，请检查画布源码是否改版`)
     continue
   }
   const count = text.split(rewrite.from).length - 1
@@ -151,7 +151,7 @@ for (const rewrite of BRIDGE_REWRITES) {
 }
 
 // ---- 3.5 画布源码补丁：菜单、全屏 API ----------------------------------------
-// 与语言包同样的做法：逐条精确替换，找不到就告警（上游改版时能立刻发现）。
+// 与语言包同样的做法：逐条精确替换，找不到就告警（画布源码改版时能立刻发现）。
 const workbenchVersion = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version
 const LIBRARY_UTILS = join(upstream, 'simple-mind-map', 'src', 'utils', 'index.js')
 const WEB_UTILS = join(webRoot, 'src', 'utils', 'index.js')
@@ -224,7 +224,7 @@ const SOURCE_PATCHES = [
         to: "          url = 'https://github.com/andoaidlaksldk/dsh-mind-workbench'"
       },
       {
-        label: '版本号不再取自上游依赖',
+        label: '版本号不再取自画布源码依赖',
         from: "import pkg from 'simple-mind-map/package.json'",
         to: '// 版本号由构建时注入（scripts/canvas-overlay.mjs）'
       },
@@ -270,9 +270,9 @@ for (const target of SOURCE_PATCHES) {
   let applied = 0
   for (const patch of target.patches) {
     if (!text.includes(patch.from)) {
-      // 这条多半是上次已经应用过了（脚本是幂等的）。真正的上游改版也会走到这里，
+      // 这条多半是上次已经应用过了（脚本是幂等的）。真正的画布源码改版也会走到这里，
       // 所以只提示、不当错误。删除类补丁本来就是"找不到才算完成"。
-      console.log(`[overlay] ${relative}：${patch.label} —— 无需处理（已应用或上游已改）`)
+      console.log(`[overlay] ${relative}：${patch.label} —— 无需处理（已应用或画布源码已改）`)
       continue
     }
     text = text.split(patch.from).join(patch.to)
@@ -300,8 +300,8 @@ if (existsSync(NAVIGATOR)) {
 
 // ---- 4. 可选：重新构建 -------------------------------------------------------
 if (args.includes('--build')) {
-  console.log('[overlay] 开始构建上游画布（vue-cli-service build），可能需要 1-3 分钟…')
-  // 上游用的是 webpack 4，在 Node 17+ 上会因为 OpenSSL 3 禁用 md4 而报
+  console.log('[overlay] 开始构建画布源码画布（vue-cli-service build），可能需要 1-3 分钟…')
+  // 画布源码用的是 webpack 4，在 Node 17+ 上会因为 OpenSSL 3 禁用 md4 而报
   // `error:0308010C:digital envelope routines::unsupported`，必须开 legacy provider。
   const result = spawnSync('npm', ['run', 'build'], {
     cwd: webRoot,

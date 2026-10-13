@@ -323,7 +323,7 @@ function route(path, methods, fetch) {
 
 // ============================================================ AI 供应商配置 ==
 //
-// 上游画布的 AI 请求并不是直连模型厂商：它把
+// 画布源码画布的 AI 请求并不是直连模型厂商：它把
 //   { api, method, headers: { Authorization }, data: { model, stream, messages } }
 // POST 到「本地桥」（默认 http://localhost:3456/ai/chat，闭源客户端提供）。
 // 也就是说这个桥**就是个通用转发器**。于是本工作台自己实现这个桥
@@ -596,7 +596,7 @@ export function apply(ctx, config) {
       }
     }))
 
-    // 画布的「连接检测」打这里。上游用它判断闭源客户端的本地服务是否活着；
+    // 画布的「连接检测」打这里。画布源码用它判断闭源客户端的本地服务是否活着；
     // 本工作台自己就是这个桥，所以只要路由在就回 200，避免误报「请下载客户端」。
     // 真正缺配置时会在 /ai/chat 上给出可读的错误。
     register(route('ai/test', ['GET'], async () => {
@@ -609,7 +609,7 @@ export function apply(ctx, config) {
     }))
 
     // 本地 AI 桥：画布的 AI 请求都打到这里，再按配置转发到所选供应商。
-    // 上游把 { api, method, headers, data } 原样交给本地桥，所以这里只需覆盖
+    // 画布源码把 { api, method, headers, data } 原样交给本地桥，所以这里只需覆盖
     // 端点 / 鉴权 / 模型名，然后把它当作 SSE 透传回去。
     register(route('ai/chat', ['POST'], async (request) => {
       try {

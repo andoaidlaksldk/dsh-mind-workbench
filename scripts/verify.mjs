@@ -96,21 +96,70 @@ for (const file of [join(root, 'package.json'), join(root, 'cordis.patch.yml'), 
 assert.ok(binaryScanned >= 6)
 ok('关键文本文件不含 NUL 字节')
 
-// 上游 index.html 的统计脚本与示例接管代码不得残留。
+// 画布源码 index.html 的统计脚本与示例接管代码不得残留。
 const appHtml = readFileSync(join(appRoot, 'index.html'), 'utf8')
 assert.equal(appHtml.includes('sdk.51.la'), false, 'app/index.html 仍含第三方统计脚本')
-assert.equal(appHtml.includes('getDataFromBackend'), false, 'app/index.html 仍含上游示例接管代码')
+assert.equal(appHtml.includes('getDataFromBackend'), false, 'app/index.html 仍含画布源码示例接管代码')
 assert.ok(appHtml.includes('window.takeOverApp = true'), 'app/index.html 必须开启接管模式')
 ok('app/index.html 已剥离统计脚本与示例代码，且开启接管模式')
 
-// AI 配置弹窗里的「教程」链接：必须已从上游的微信公众号文章改成我们托管的教程页。
+// AI 配置弹窗里的「教程」链接：必须已从画布的微信公众号文章改成我们托管的教程页。
 const TUTORIAL_URL = '/api/dsh-mind-workbench/app/docs/ai-model-setup.html'
 const bundleFiles = walk(join(appRoot, 'dist', 'js')).filter((file) => file.endsWith('.js'))
 const bundles = bundleFiles.map((file) => readFileSync(join(appRoot, 'dist', 'js', file), 'utf8'))
-assert.equal(bundles.some((text) => text.includes('mp.weixin.qq.com')), false, '上游的微信教程链接仍然存在')
+assert.equal(bundles.some((text) => text.includes('mp.weixin.qq.com')), false, '画布的微信教程链接仍然存在')
 assert.equal(bundles.filter((text) => text.includes(TUTORIAL_URL)).length, 1, '应恰有一个产物把「教程」链接指向本地教程页')
 assert.ok(existsSync(join(appRoot, 'docs', 'ai-model-setup.html')), '缺少教程页 app/docs/ai-model-setup.html')
 ok('「教程」链接已指向本包托管的模型配置教程页')
+
+// ------------------------------------------------ 导出格式：文档必须与产物一致 --
+// 市场审核曾因「介绍里写了 Xlsx / FreeMind / Mermaid / Html」判为不符：
+// 画布自带的导出对话框（产物里的 downTypeList 计算属性）会过滤掉 mm（FreeMind）与
+// xlsx（Excel），而 Mermaid / Html 从来没有实现。
+// 这里不靠人工记忆：直接从产物解析「用户实际能选到的格式」，再断言文档只声明这些。
+const anchor = '导图文件'
+const anchorIndex = bundles.map((text) => text.indexOf(anchor)).find((index) => index !== -1)
+assert.ok(anchorIndex !== undefined, '产物里没有找到导出类型配置（画布的导出对话框可能已改动）')
+const bundleWithExports = bundles.find((text) => text.includes(anchor))
+// 往前多取一点：锚点是「导图文件」这几个字，而条目本身是 {name:"导图文件",type:"smm"…}，
+// 从锚点处切会把第一个条目的 `{name:"` 切掉，导致第一条被漏解析（踩过一次）。
+const exportBlock = bundleWithExports.slice(Math.max(0, anchorIndex - 40), bundleWithExports.indexOf(']', anchorIndex))
+const exportEntries = [...exportBlock.matchAll(/\{name:"([^"]+)",type:"([^"]+)"/g)]
+  .map((match) => ({ name: match[1], type: match[2] }))
+assert.ok(exportEntries.length >= 5, `解析出的导出类型过少（${exportEntries.length}），解析逻辑需要更新`)
+// 导出对话框过滤掉的类型，形如：filter(t=>"mm"!==t.type&&"xlsx"!==t.type)
+// 注意要在整份产物里找这个两类型过滤式，再挑出「两个类型都属于导出配置」的那一条——
+// 产物里还有别的形如 `"x"!==t.type` 的比较，直接全局抓会误伤。
+const exportTypes = new Set(exportEntries.map((entry) => entry.type))
+const excludedTypes = [...bundleWithExports.matchAll(/filter\((\w+)=>"([^"]+)"!==\1\.type&&"([^"]+)"!==\1\.type/g)]
+  .map((match) => [match[2], match[3]])
+  .find((types) => types.every((type) => exportTypes.has(type)))
+assert.ok(excludedTypes, '没有解析到导出对话框的类型过滤规则（画布的导出逻辑可能已改动）')
+const availableExports = exportEntries.filter((entry) => !excludedTypes.includes(entry.type))
+assert.deepEqual(
+  availableExports.map((entry) => entry.name),
+  ['导图文件', '图片', 'SVG', 'PDF', 'Markdown', 'XMind', 'Txt', 'JSON'],
+  `产物实际开放的导出格式与预期不符（画布版本变化？实际：${availableExports.map((entry) => entry.name).join('、')}）`
+)
+
+const readme = readFileSync(join(root, 'README.md'), 'utf8')
+const integration = readFileSync(join(root, 'INTEGRATION.md'), 'utf8')
+for (const entry of availableExports) {
+  assert.ok(readme.includes(entry.name), `README 没有列出产物实际支持的导出格式：${entry.name}`)
+}
+for (const unsupported of ['Xlsx', 'Excel', 'FreeMind', 'Mermaid', 'Html']) {
+  assert.equal(readme.includes(unsupported), false, `README 声明了产物实际不提供的格式：${unsupported}`)
+  assert.equal(integration.includes(unsupported), false, `INTEGRATION.md 声明了产物实际不提供的格式：${unsupported}`)
+}
+ok(`文档声明的导出格式与产物一致（实际 ${availableExports.length} 种：${availableExports.map((entry) => entry.name).join('、')}）`)
+
+// 措辞与来源声明：本项目是内嵌画布项目的二次开发，文档不用「上游 / 下游」这类相对措辞。
+for (const doc of ['README.md', 'INTEGRATION.md', 'THIRD-PARTY-NOTICES.md']) {
+  const text = readFileSync(join(root, doc), 'utf8')
+  assert.equal(/上游|下游/.test(text), false, `${doc} 里出现了「上游 / 下游」措辞`)
+}
+assert.ok(readme.includes('二次开发'), 'README 里应说明本项目是二次开发')
+ok('文档措辞统一，并如实声明了二次开发')
 
 // ------------------------------------------------------------------ 2. 服务端 --
 
@@ -254,7 +303,7 @@ try {
   assert.equal(encoded.status, 404, '非 ASCII 路径不可登记，必须返回 404 而不是让插件失效')
   ok('带 query hash 的构建产物与 ASCII 化素材可访问，非 ASCII 路径安全 404')
 
-  // 模型配置教程页必须可访问，且弹窗里的「教程」链接指向它（上游指向的是微信公众号文章）
+  // 模型配置教程页必须可访问，且弹窗里的「教程」链接指向它（画布源码指向的是微信公众号文章）
   const tutorial = await request('GET', '/api/dsh-mind-workbench/app/docs/ai-model-setup.html')
   assert.equal(tutorial.status, 200, '教程页必须可访问')
   assert.match(tutorial.headers.get('content-type'), /text\/html/)
@@ -487,7 +536,7 @@ assert.ok(client.includes("allow: 'fullscreen'"), 'iframe 必须声明 allow="fu
 assert.ok(client.includes('allowFullScreen: true'), 'iframe 必须带 allowFullScreen 兼容旧写法')
 ok('内嵌画布 iframe 已授予全屏权限（演示模式 / 全屏查看）')
 
-// 画布产物的定制项：Github 指向本工作台仓库、不再出现上游仓库地址、版本号是本工作台的。
+// 画布产物的定制项：Github 指向本工作台仓库、不再出现画布源码仓库地址、版本号是本工作台的。
 const distJsDir = join(appRoot, 'dist', 'js')
 let distJs = ''
 for (const file of readdirSync(distJsDir)) {
@@ -495,15 +544,15 @@ for (const file of readdirSync(distJsDir)) {
 }
 const workbenchVersion = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version
 assert.ok(distJs.includes('https://github.com/andoaidlaksldk/dsh-mind-workbench'), 'Github 菜单必须指向本工作台仓库')
-assert.equal(distJs.includes('wanglin2'), false, '产物里不得再出现上游仓库地址')
+assert.equal(distJs.includes('wanglin2'), false, '产物里不得再出现画布源码仓库地址')
 assert.ok(distJs.includes(workbenchVersion), `关于菜单里的版本号必须是本工作台版本（${workbenchVersion}）`)
-ok('画布产物：Github 指向本工作台、无上游仓库地址、版本号为本工作台版本')
+ok('画布产物：Github 指向本工作台、无画布源码仓库地址、版本号为本工作台版本')
 
 const bridge = readFileSync(join(appRoot, 'bridge.js'), 'utf8')
 for (const method of ['getMindMapData', 'saveMindMapData', 'getMindMapConfig', 'saveMindMapConfig', 'getLanguage', 'saveLanguage', 'getLocalConfig', 'saveLocalConfig']) {
   assert.ok(bridge.includes(`${method}:`), `bridge.js 必须实现接管协议方法 ${method}`)
 }
-ok('app/bridge.js 实现上游接管模式的全部 8 个方法')
+ok('app/bridge.js 实现画布源码接管模式的全部 8 个方法')
 
 for (const marker of ["notify('dirty')", 'markDirty', 'flushBeacon', 'sendBeacon']) {
   assert.ok(bridge.includes(marker), `bridge.js 缺少脏标记/卸载兜底：${marker}`)

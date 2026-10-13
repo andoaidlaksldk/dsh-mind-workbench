@@ -155,7 +155,7 @@
   // 这里再置一次，避免桥被单独引入时行为不一致。
   window.takeOverApp = true
 
-  // 上游在首次打开时会弹「网页版仅供试用，请下载客户端」的提示框。
+  // 画布源码在首次打开时会弹「网页版仅供试用，请下载客户端」的提示框。
   // 内置工作台是完整功能，这里预置它自己的去重标志，避免每次新环境都弹一次。
   try {
     if (!window.localStorage.getItem('webUseTip')) window.localStorage.setItem('webUseTip', '1')
@@ -256,7 +256,7 @@
   }
 
   // 「教程」等包内文档链接：在画布内以浮层打开。
-  // 上游用的是 target="_blank"，在桌面壳里会被 window.open 策略拦掉（点了没反应），
+  // 画布源码用的是 target="_blank"，在桌面壳里会被 window.open 策略拦掉（点了没反应），
   // 所以这里自己接管，保证一定打得开，而且不丢画布状态。
   var DOC_PREFIX = API + '/app/docs/'
 
@@ -293,7 +293,7 @@
     document.body.appendChild(overlay)
   }
 
-  // 捕获阶段拦截，避免上游的 target="_blank" 先被处理。
+  // 捕获阶段拦截，避免画布的 target="_blank" 先被处理。
   document.addEventListener('click', function (event) {
     var node = event.target
     while (node && node !== document.body) {

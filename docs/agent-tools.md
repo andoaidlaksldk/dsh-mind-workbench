@@ -56,4 +56,4 @@
   `ctx.inject(['tools'], …)` 注册；`tools` 服务缺失时只是工具不注册，插件本体照常加载。
 - 工具定义用官方的 `defineTool`（`@deepseek-ai/dsh-tools`，已在 `peerDependencies` 声明）。
 - 大纲 ⇄ 导图的转换在同文件的 `outlineToMindMap()` / `mindMapToOutline()`，由 `verify.mjs` 断言。
-- `mindmap_write` 生成的导图使用上游默认主题与 `logicalStructure` 结构；覆盖已有文档时保留它原本的主题与结构。
+- `mindmap_write` 生成的导图使用画布源码默认主题与 `logicalStructure` 结构；覆盖已有文档时保留它原本的主题与结构。

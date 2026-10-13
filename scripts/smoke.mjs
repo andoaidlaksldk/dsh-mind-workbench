@@ -159,7 +159,7 @@ assert.match(page.headers.get('content-type'), /text\/html/)
 assert.ok(pageHtml.includes('bridge.js') && pageHtml.includes('window.takeOverApp = true'))
 ok('入口页可访问且已开启接管模式')
 
-// 上游重新构建后，分块名里的内容哈希会变（chunk-<hash>.js），所以从磁盘挑最大的那块，
+// 画布源码重新构建后，分块名里的内容哈希会变（chunk-<hash>.js），所以从磁盘挑最大的那块，
 // 不要在测试里写死文件名。
 const bundleDirectory = join(resolve(dirname(fileURLToPath(import.meta.url)), '..'), 'app', 'dist', 'js')
 const bigChunk = readdirSync(bundleDirectory)

@@ -122,7 +122,9 @@ const REQUIRED = [
   'app/bridge.js',
   'app/dist/js/app.js',
   'README.md',
-  'LICENSE'
+  'LICENSE',
+  // 二次开发必须随包分发第三方声明（内嵌画布保留其原始许可）。
+  'THIRD-PARTY-NOTICES.md'
 ]
 const missing = REQUIRED.filter((path) => !relative.includes(path))
 if (missing.length) fail(`缺少必需文件：${missing.join('、')}`)
@@ -157,7 +159,7 @@ for (const entry of archive) {
 }
 if (offenders.length) fail(`包内含本机绝对路径：${offenders.join('、')}`)
 else ok('包内未出现本机绝对路径')
-if (warnings.length) console.log(`  ! app/dist 内的上游压缩产物含疑似盘符/家目录字面量，建议人工确认：${warnings.join('、')}`)
+if (warnings.length) console.log(`  ! app/dist 内的画布源码压缩产物含疑似盘符/家目录字面量，建议人工确认：${warnings.join('、')}`)
 
 if (process.exitCode) {
   console.error(`\n[check-package] 未通过（${checks} 项通过，见上方 ✗）`)
