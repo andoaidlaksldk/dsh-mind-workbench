@@ -1,0 +1,13 @@
+﻿# 发布包精简：排除非运行时文件（门禁建议通过 .npmignore 排除测试/构建中间产物）
+*.map
+*.tsbuildinfo
+*.log
+.DS_Store
+Thumbs.db
+coverage/
+.nyc_output/
+__tests__/
+test/
+tests/
+*.test.js
+*.spec.js
