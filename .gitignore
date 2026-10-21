@@ -10,3 +10,9 @@ node_modules/
 Thumbs.db
 *.bak
 *.bak-*
+
+# 白板前端是同步生成的构建产物（npm run app:sync 从 mind-map 源项目生成），不入库；
+# 安装包由 npm pack 在本地重新生成，不依赖仓库内副本。仅保留自研的桥接脚本 app/bridge.js。
+/app/dist/
+/app/index.html
+/app/docs/
