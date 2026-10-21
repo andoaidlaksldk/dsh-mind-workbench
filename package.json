@@ -17,7 +17,8 @@
     "cordis.patch.yml",
     "app",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "THIRD-PARTY-NOTICES.md"
   ],
   "license": "MIT",
   "author": "DSH Mind Workbench",

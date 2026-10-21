@@ -1,4 +1,4 @@
-MIT License
+﻿MIT License
 
 Copyright (c) 2026 DSH Mind Workbench contributors
 
@@ -19,3 +19,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+第三方开源声明 / Third-Party Notice
+
+本仓库内嵌画布基于第三方开源项目 simple-mind-map（mind-map，上游作者 wanglin2，
+https://github.com/wanglin2/mind-map，MIT 协议）。其原始版权与许可证文本见
+THIRD-PARTY-NOTICES.md，并按 MIT 要求完整保留：
+
+    Copyright (c) 2021-2023 The MindMap Team
+
+DSH 思维导图工作台的 MIT 许可（见本文件上部）与上游 simple-mind-map 的 MIT 许可各自独立、有效。
