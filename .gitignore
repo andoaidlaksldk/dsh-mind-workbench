@@ -16,3 +16,6 @@ Thumbs.db
 /app/dist/
 /app/index.html
 /app/docs/
+
+# 实拍截图是二进制，移出 git 跟踪；仅供市场引用，托管在 screenshots 分支（安全门禁只下载 main 源码归档，二进制会破坏 Copilot JSON 解析）
+/docs/screenshots/
